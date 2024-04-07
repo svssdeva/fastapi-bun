@@ -1,8 +1,8 @@
 import { Redis } from '@upstash/redis'
 
 const redis = new Redis({
-    url: 'https://related-coral-48880.upstash.io',
-    token: 'Ab7wASQgZmJkNTFkZjktMGFiMS00NjdhLTg2YzYtNTkxN2U5ZmExNjQwNDk0NmRlOTVlZTJkNDA4ODgzMzZkMGY3OTI3OTUzOGM=',
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN
 })
 
 const countryList = [

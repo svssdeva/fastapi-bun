@@ -1,0 +1,5 @@
+name = "fastapi-bun"
+compatibility_date = "2024-04-07"
+[vars]
+UPSTASH_REDIS_REST_TOKEN=Ab7wASQgZmJkNTFkZjktMGFiMS00NjdhLTg2YzYtNTkxN2U5ZmExNjQwNDk0NmRlOTVlZTJkNDA4ODgzMzZkMGY3OTI3OTUzOGM=
+UPSTASH_REDIS_REST_URL=https://related-coral-48880.upstash.io

@@ -13,23 +13,39 @@ type EnvConfig = {
 }
 
 app.get('/search', async (c) => {
-    const { UPSTASH_REDIS_REST_TOKEN, UPSTASH_REDIS_REST_URL } = env<EnvConfig>(c);
-    const redis = new Redis({
-        token: UPSTASH_REDIS_REST_TOKEN,
-        url: UPSTASH_REDIS_REST_URL
-    });
-    const query = c.req.query("q");
-    if (!query) {
-        return c.json({ message: 'Invalid search query' }, { status: 400 })
-    }
-    const res = [];
-    const rank = await redis.zrank("terms", query)
+    try {
+        const { UPSTASH_REDIS_REST_TOKEN, UPSTASH_REDIS_REST_URL } = env<EnvConfig>(c);
+        const start = performance.now();
+        const redis = new Redis({
+            token: UPSTASH_REDIS_REST_TOKEN,
+            url: UPSTASH_REDIS_REST_URL
+        });
+        const query = c.req.query("q")?.toUpperCase();
+        if (!query) {
+            return c.json({ message: 'Invalid search query' }, { status: 400 })
+        }
+        const res = [];
+        const rank = await redis.zrank("terms", query)
 
-    if (rank !== null && rank !== undefined) {
-        const temp = await redis.zrange("terms", rank, rank + 100)
-    }
+        if (rank !== null && rank !== undefined) {
+            const temp = await redis.zrange<string[]>("terms", rank, rank + 250)
 
-    return c.json({})
+            for (const el of temp) {
+                if (!el.startsWith(query)) {
+                    break;
+                }
+                if (el.endsWith('*')) {
+                    res.push(el.substring(0, el.length - 1))
+                }
+            }
+        }
+
+        const end = performance.now();
+        return c.json({ results: res, duration: end - start }, { status: 200 })
+    } catch (e) {
+        console.error(e);
+        return c.json({ results: [], message: JSON.stringify(e) }, { status: 500 });
+    }
 });
 
 export const GET = handle(app);
