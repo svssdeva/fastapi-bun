@@ -10,7 +10,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       if (!input) return setSearchResults(undefined)
-      const res = await fetch(`/api/search?q=${input}`);
+      const res = await fetch(`https://fastapi-bun.fastapi-bun.workers.dev/api/search?q=${input}`);
       const data = (await res.json()) as { results: string[]; duration: number }
       setSearchResults(data);
     }
